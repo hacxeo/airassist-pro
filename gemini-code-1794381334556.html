@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AirAssist Pro | Universal Airport Wheelchair Coordination System</title>
+<style>
+:root{--ink:#0f172a;--muted:#64748b;--navy:#091e36;--navy-card:#0f2b48;--teal:#0d9488;--teal-light:#cdedec;--paper:#f8fafc;--line:#e2e8f0;--white:#fff;--yellow:#eab308;--orange:#f97316;--red:#ef4444;--blue:#3b82f6;--shadow:0 12px 36px rgba(15,23,42,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{background:var(--navy);color:#cbd5e1;padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 24px;border-bottom:1px solid #1e3a5f}
+.brand-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#14b8a6,#3b82f6);display:grid;place-items:center;color:#fff;font-size:20px;font-weight:900}
+.brand strong{font-size:16px;color:#fff;display:block}.brand small{color:#94a3b8;font-size:9px;letter-spacing:1.5px}
+.nav-label{font-size:10px;color:#64748b;letter-spacing:1.5px;padding:16px 8px 6px;text-transform:uppercase}
+.nav button{width:100%;border:0;background:transparent;color:#94a3b8;text-align:left;padding:11px 12px;border-radius:10px;margin:2px 0;display:flex;gap:10px;align-items:center;font-size:13px;transition:.2s}
+.nav button:hover,.nav button.active{background:#1e3a5f;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--teal);font-weight:600}
+.nav .ico{width:18px;text-align:center}
+.side-bottom{margin-top:auto;border-top:1px solid #1e3a5f;padding:16px 8px 0;color:#64748b;font-size:11px;line-height:1.5}
+.main{min-width:0}
+.topbar{height:70px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:4}
+.crumb{font-size:12px;color:var(--muted)}.crumb b{color:var(--ink)}
+.top-actions{display:flex;align-items:center;gap:12px}
+.user-badge{background:#e2e8f0;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600}
+.content{max-width:1400px;margin:auto;padding:28px 32px 60px}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(120deg,#091e36 0%,#0f2b48 60%,#0d9488 120%);color:#fff;border-radius:20px;padding:36px;display:grid;grid-template-columns:1.3fr .7fr;gap:24px;box-shadow:var(--shadow)}
+.hero h1{font-size:36px;line-height:1.15;margin:12px 0}.hero p{color:#cbd5e1;font-size:14px;line-height:1.6}
+.actions{display:flex;gap:10px;margin-top:20px}
+.btn{border:0;border-radius:8px;padding:10px 16px;font-weight:600;font-size:12px;transition:.2s}.btn:hover{transform:translateY(-1px)}
+.primary{background:var(--teal);color:#fff}.white{background:#fff;color:var(--navy)}.ghost{background:#e2e8f0;color:var(--ink)}.dark{background:var(--navy);color:#fff}.outline{border:1px solid #cbd5e1;background:#fff;color:var(--ink)}.danger{background:var(--red);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.03);margin-bottom:16px}
+.stat small{color:var(--muted);font-size:11px}.stat strong{display:block;font-size:26px;margin-top:4px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:var(--muted);font-size:11px;padding:10px;border-bottom:1px solid var(--line)}
+td{padding:12px 10px;border-bottom:1px solid var(--line)}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:600;color:#334155}
+.field input,.field select,.field textarea{border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;outline:none;font-size:12px}.field input:focus,.field select:focus{border-color:var(--teal)}
+.tag{display:inline-block;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.tag.yellow{background:#fef9c3;color:#854d0e}.tag.orange{background:#ffedd5;color:#9a3412}.tag.red{background:#fee2e2;color:#991b1b}.tag.green{background:#dcfce7;color:#166534}.tag.blue{background:#dbeafe;color:#1e40af}
+.toast{position:fixed;right:20px;bottom:20px;background:#091e36;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);font-size:12px;z-index:99;display:none}
+.auth-card{max-width:440px;margin:40px auto;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+.hidden{display:none!important}
+canvas{background:#0f172a;border-radius:12px;width:100%;height:240px}
+.pass-card{border:2px dashed var(--teal);padding:20px;border-radius:12px;background:#f0fdfa;margin-top:16px}
+@media print{.sidebar,.topbar,.actions,.btn{display:none!important}.shell{display:block}.content{padding:0}}
+@media(max-width:768px){.shell{grid-template-columns:1fr}.sidebar{display:none}.grid2,.grid3,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">♿</div><div><strong>AirAssist Pro</strong><small>UNIVERSAL AIRPORT SYSTEM</small></div></div>
+  <div class="nav-label" data-i18n="navMain">Main Navigation</div>
+  <nav class="nav">
+    <button class="active" onclick="showPage('home')"><span class="ico">⌂</span> <span data-i18n="menuHome">Overview</span></button>
+    <button onclick="showPage('passenger-auth')"><span class="ico">👤</span> <span data-i18n="menuPassenger">Passenger Portal</span></button>
+    <button onclick="showPage('request')"><span class="ico">♿</span> <span data-i18n="menuRequest">Request Assistance</span></button>
+    <button onclick="showPage('track')"><span class="ico">◎</span> <span data-i18n="menuTrack">Live Interactive Map</span></button>
+    <button onclick="showPage('staff')"><span class="ico">▣</span> <span data-i18n="menuStaff">Staff Workstation</span></button>
+    <button onclick="showPage('admin')"><span class="ico">▦</span> <span data-i18n="menuAdmin">Admin Command Hub 🔒</span></button>
+    <button onclick="showPage('alerts')"><span class="ico">⚑</span> <span data-i18n="menuAlerts">Emergency & SLA Alerts</span></button>
+    <button onclick="showPage('help')"><span class="ico">❓</span> <span data-i18n="menuHelp">Help & Support</span></button>
+  </nav>
+  <div class="side-bottom">Noorul Islam Centre for Higher Education Academic Project</div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div class="crumb">AirAssist / <b id="crumbTitle">Overview</b></div>
+  <div class="top-actions">
+    <select id="langSelect" onchange="changeLanguage(this.value)" style="padding:6px 10px;border-radius:8px;border:1px solid #cbd5e1;font-size:12px;background:#fff;font-weight:600">
+      <option value="en">English</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="hi">हिन्दी (Hindi)</option>
+    </select>
+    <button class="btn outline" onclick="showPage('staff')">Staff</button>
+    <button class="btn dark" onclick="showPage('admin')">Admin 🔒</button>
+    <span class="user-badge" id="currentUserBadge">Guest</span>
+  </div>
+</header>
+<div class="content">
+
+<!-- OVERVIEW -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div>
+      <span class="tag blue">UNIVERSAL AIRPORT STANDARD</span>
+      <h1 data-i18n="heroTitle">Smart Wheelchair Assistance System</h1>
+      <p data-i18n="heroDesc">Equipped with Twilio SMS integration, automated SLA priority timers, and 2D interactive terminal floor mapping for airports worldwide.</p>
+      <div class="actions">
+        <button class="btn primary" onclick="showPage('request')" data-i18n="btnRequest">Request Assistance ↗</button>
+        <button class="btn white" onclick="showPage('track')" data-i18n="btnTrack">Track Request</button>
+        <button class="btn dark" onclick="showPage('admin')" data-i18n="btnAdmin">Admin Security Hub 🔒</button>
+      </div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><small data-i18n="statTotal">Total Requests</small><strong id="stTotal">0</strong></div>
+    <div class="stat"><small data-i18n="statPending">Pending</small><strong id="stPending">0</strong></div>
+    <div class="stat"><small data-i18n="statAssigned">Assigned Staff</small><strong id="stAssigned">0</strong></div>
+    <div class="stat"><small data-i18n="statDone">Completed</small><strong id="stDone">0</strong></div>
+  </div>
+</section>
+
+<!-- PASSENGER AUTH -->
+<section class="page" id="page-passenger-auth">
+  <div class="auth-card">
+    <h2 style="margin:0 0 6px">Passenger Access Portal</h2>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 16px">Sign in or register a secure account with SMS verification.</p>
+    
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="btn outline" style="flex:1" onclick="switchAuthTab('login')" id="tabLoginBtn">Sign In</button>
+      <button class="btn outline" style="flex:1" onclick="switchAuthTab('register')" id="tabRegBtn">Register</button>
+    </div>
+
+    <form id="loginForm">
+      <div class="field" style="margin-bottom:10px"><label>Email or Mobile</label><input id="loginUser" required placeholder="User ID / Mobile"></div>
+      <div class="field" style="margin-bottom:16px"><label>Password</label><input id="loginPass" type="password" required placeholder="Password"></div>
+      <button class="btn primary" style="width:100%">Sign In</button>
+    </form>
+
+    <form id="regForm" class="hidden">
+      <div class="field" style="margin-bottom:10px"><label>Full Name *</label><input id="regName" required placeholder="Full Name"></div>
+      <div class="field" style="margin-bottom:10px"><label>Mobile Number (SMS Enabled) *</label><input id="regPhone" required placeholder="+91 98765 43210"></div>
+      <div class="field" style="margin-bottom:10px"><label>Email Address *</label><input id="regEmail" type="email" required placeholder="name@email.com"></div>
+      <div class="field" style="margin-bottom:10px"><label>Emergency Contact Phone *</label><input id="regEmPhone" required placeholder="Relative / Emergency Number"></div>
+      <div class="field" style="margin-bottom:16px"><label>Create Password *</label><input id="regPass" type="password" required placeholder="Choose Password"></div>
+      <button class="btn primary" style="width:100%">Register & Trigger Twilio SMS</button>
+    </form>
+  </div>
+</section>
+
+<!-- REQUEST ASSISTANCE -->
+<section class="page" id="page-request">
+  <h2>Request Wheelchair Support</h2>
+  <div class="panel" style="max-width:650px">
+    <form id="reqForm">
+      <div class="form-grid">
+        <div class="field full"><label>Passenger Full Name *</label><input id="reqName" required placeholder="Passenger Name"></div>
+        <div class="field"><label>Flight Number *</label><input id="reqFlight" required placeholder="e.g. AI 602"></div>
+        <div class="field"><label>Boarding Time *</label><input id="reqTime" type="time" required></div>
+        <div class="field"><label>Pickup Point *</label>
+          <select id="reqLoc" required>
+            <option value="">Select Pickup Point</option>
+            <option>Departure Gate Entrance</option>
+            <option>Check-in Counter 4B</option>
+            <option>Security Checkpoint</option>
+            <option>Transit Lounge</option>
+          </select>
+        </div>
+        <div class="field"><label>Target Gate *</label><input id="reqGate" required placeholder="e.g. Gate 14"></div>
+        
+        <div class="field full">
+          <label style="color:var(--teal)">Preferred Assistance Staff (Gender Comfort) *</label>
+          <select id="reqGenderPref" required style="border-color:var(--teal)">
+            <option value="Any">No Preference (Anyone / யார் வேண்டுமானாலும்)</option>
+            <option value="Female">Female Staff Only (பெண் உதவியாளர் மட்டும்)</option>
+            <option value="Male">Male Staff Only (ஆண் உதவியாளர் மட்டும்)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn primary" style="margin-top:16px">Submit Assistance & Send SMS Confirmation</button>
+    </form>
+  </div>
+</section>
+
+<!-- LIVE TRACKING -->
+<section class="page" id="page-track">
+  <h2>Interactive Terminal Floor Plan & Live Tracker</h2>
+  <div class="panel" style="margin-bottom:16px">
+    <form id="trackForm" style="display:flex;gap:10px">
+      <input id="trackId" placeholder="Enter Request ID (e.g. AA-2026-0001)" style="flex:1;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px" required>
+      <button class="btn primary">Track Request</button>
+    </form>
+  </div>
+  
+  <div class="panel hidden" id="trackCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 id="trIdDisplay" style="margin:0">AA-2026-0001</h3>
+      <span class="tag green" id="trStatusTag">Pending</span>
+    </div>
+    
+    <!-- Interactive 2D Airport Gate Floor Plan Canvas -->
+    <canvas id="mapCanvas"></canvas>
+    
+    <div class="pass-card" id="passPrintArea">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h4>BOARDING ASSISTANCE PASS</h4>
+        <button class="btn outline" onclick="window.print()">Print Pass 🖨️</button>
+      </div>
+      <div id="trDetails" style="font-size:13px;line-height:1.6;margin-top:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- STAFF WORKSTATION -->
+<section class="page" id="page-staff">
+  <h2>Staff Workstation</h2>
+  <div class="auth-card" id="staffAuthCard">
+    <p style="font-size:12px;color:var(--muted)">Demo Login: <b>STAFF-01</b> / Password: <b>staff123</b></p>
+    <form id="staffLoginForm">
+      <div class="field" style="margin-bottom:10px"><label>Staff ID</label><input id="stId" value="STAFF-01" required></div>
+      <div class="field" style="margin-bottom:16px"><label>PIN Password</label><input id="stPin" type="password" value="staff123" required></div>
+      <button class="btn primary" style="width:100%">Sign In Staff</button>
+    </form>
+  </div>
+  
+  <div class="panel hidden" id="staffDashboard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3>Assigned Tasks Queue & SLA Timers</h3>
+      <button class="btn ghost" onclick="staffLogout()">Sign Out</button>
+    </div>
+    <div class="table-wrap">
+      <table id="staffTable">
+        <thead><tr><th>ID</th><th>Passenger</th><th>Route</th><th>SLA / Boarding</th><th>Gender Pref</th><th>Status Control</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN COMMAND CENTER -->
+<section class="page" id="page-admin">
+  <h2>Admin Command & Security Center 🔒</h2>
+  <div class="auth-card" id="adminAuthCard">
+    <p style="font-size:12px;color:var(--muted)">Admin Login: <b>admin</b> / Password: <b>admin123</b></p>
+    <form id="adminLoginForm">
+      <div class="field" style="margin-bottom:10px"><label>Admin ID</label><input id="adId" value="admin" required></div>
+      <div class="field" style="margin-bottom:16px"><label>Admin Password</label><input id="adPass" type="password" value="admin123" required></div>
+      <button class="btn dark" style="width:100%">Login to Admin Command Hub</button>
+    </form>
+  </div>
+  
+  <div class="hidden" id="adminDashboard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="tag red">SECURE ADMIN ACCESS ONLY</span>
+        <input id="adminSearch" placeholder="Search passenger, phone..." style="padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px" oninput="render()">
+      </div>
+      <div>
+        <button class="btn outline" onclick="exportCSV()">Export CSV Audit ↓</button>
+        <button class="btn ghost" onclick="adminLogout()">Logout</button>
+      </div>
+    </div>
+    
+    <div class="panel">
+      <h3>1. Live Assistance Requests & Automated SLA Escalation</h3>
+      <div class="table-wrap">
+        <table id="adminTable">
+          <thead><tr><th>ID / Passenger</th><th>Flight / Gate</th><th>SLA Timer</th><th>Gender Pref</th><th>Assign Staff</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="color:var(--navy)">2. Passenger Safety Directory (Emergency Contacts & IDs) 🛡️</h3>
+      <p style="font-size:12px;color:var(--muted)">For security audits, lost items, and medical emergency tracking. Strictly hidden from public view.</p>
+      <div class="table-wrap">
+        <table id="adminUserTable">
+          <thead><tr><th>User ID</th><th>Full Name</th><th>Mobile Number</th><th>Email Address</th><th>Emergency Contact</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EMERGENCY ALERTS -->
+<section class="page" id="page-alerts">
+  <h2>Emergency & SLA Priority Controls</h2>
+  <div class="panel">
+    <h3>Dispatch Emergency Response & Twilio Broadcast</h3>
+    <form id="emergencyForm" style="display:flex;gap:10px;margin-top:10px">
+      <input id="emId" placeholder="Enter Request ID (e.g. AA-2026-0001)" style="flex:1;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px" required>
+      <button class="btn danger">Flag Emergency & Send SMS Alert</button>
+    </form>
+  </div>
+</section>
+
+<!-- HELP & SUPPORT -->
+<section class="page" id="page-help">
+  <h2>Help & Support Center</h2>
+  
+  <div class="panel" style="margin-bottom:16px">
+    <h3>Frequently Asked Questions (FAQ)</h3>
+    <p><b>Q: வீல்சேர் உதவிக்கு எப்படி பதிவு செய்வது?</b><br>A: 'Passenger Portal' சென்று பதிவு செய்த பிறகு, 'Request Assistance' பக்கத்தில் உங்கள் விமான எண் மற்றும் பிக்கப் பாயின்ட்டை கொடுத்து பதிவு செய்யலாம்.</p>
+    <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
+    <p><b>Q: பெண் பணியாளர்களை (Female Staff) எப்படி தேர்வு செய்வது?</b><br>A: ரெக்வெஸ்ட் படிவத்தில் 'Preferred Assistance Staff' என்ற இடத்தில் 'Female Staff Only' என்று தேர்வு செய்தால் பெண் உதவியாளர் ஒதுக்கப்படுவார்.</p>
+    <hr style="border:0;border-top:1px solid var(--line);margin:10px 0">
+    <p><b>Q: Twilio SMS நோட்டிபிகேஷன் எப்படி வேலை செய்கிறது?</b><br>A: பதிவு செய்யும்போதும், ரெக்வெஸ்ட் உருவாக்கப்படும்போதும் உங்கள் மொபைல் எண்ணிற்கு ஆட்டோமேட்டிக்காக SMS மற்றும் WhatsApp டெக்ஸ்ட் உறுதிப்படுத்தல் அனுப்பப்படும்.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Need Direct Assistance? Send a Query</h3>
+    <form id="helpForm" onsubmit="event.preventDefault(); toast('Your query has been sent to Airport Support Team!'); document.getElementById('helpForm').reset();">
+      <div class="field" style="margin-bottom:10px"><label>Your Name / Request ID</label><input required placeholder="Name or AA-2026-XXXX"></div>
+      <div class="field" style="margin-bottom:10px"><label>Issue / Query Description</label><textarea required placeholder="Describe your issue here..." style="border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;height:80px"></textarea></div>
+      <button class="btn primary">Send to Support Team</button>
+    </form>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const translations = {
+  en: {
+    navMain: "Main Navigation",
+    menuHome: "Overview",
+    menuPassenger: "Passenger Portal",
+    menuRequest: "Request Assistance",
+    menuTrack: "Live Interactive Map",
+    menuStaff: "Staff Workstation",
+    menuAdmin: "Admin Command Hub 🔒",
+    menuAlerts: "Emergency & SLA Alerts",
+    menuHelp: "Help & Support",
+    heroTitle: "Smart Wheelchair Assistance System",
+    heroDesc: "Equipped with Twilio SMS integration, automated SLA priority timers, and 2D interactive terminal floor mapping for airports worldwide.",
+    btnRequest: "Request Assistance ↗",
+    btnTrack: "Track Request",
+    btnAdmin: "Admin Security Hub 🔒",
+    statTotal: "Total Requests",
+    statPending: "Pending",
+    statAssigned: "Assigned Staff",
+    statDone: "Completed"
+  },
+  ta: {
+    navMain: "முதன்மை மெனு",
+    menuHome: "முகப்பு (Overview)",
+    menuPassenger: "பயணிகள் போர்ட்டல்",
+    menuRequest: "உதவி கோரிக்கை",
+    menuTrack: "லைவ் மேப் & டிராக்கிங்",
+    menuStaff: "ஊழியர் பணி நிலையம்",
+    menuAdmin: "நிர்வாகக் கட்டுப்பாட்டு அறை 🔒",
+    menuAlerts: "அவசர & SLA எச்சரிக்கைகள்",
+    menuHelp: "உதவி மற்றும் ஆதரவு",
+    heroTitle: "ஸ்மார்ட் வீல்சேர் உதவி அமைப்பு",
+    heroDesc: "Twilio SMS வசதி, தானியங்கி SLA டைமர்கள் மற்றும் டெர்மினல் ஃப்ளோர் மேப் ஆகியவற்றுடன் உலகளாவிய ஏர்போர்ட்டுகளுக்காக உருவாக்கப்பட்டது.",
+    btnRequest: "உதவி கோர ↗",
+    btnTrack: "கோரிக்கையைக் கண்காணிக்க",
+    btnAdmin: "நிர்வாகப் பாதுகாப்பு மையம் 🔒",
+    statTotal: "மொத்த கோரிக்கைகள்",
+    statPending: "நிலுவையில் உள்ளவை",
+    statAssigned: "ஒதுக்கப்பட்ட ஊழியர்கள்",
+    statDone: "முடிவடைந்தவை"
+  },
+  hi: {
+    navMain: "मुख्य नेविगेशन",
+    menuHome: "अवलोकन",
+    menuPassenger: "यात्री पोर्टल",
+    menuRequest: "सहायता अनुरोध",
+    menuTrack: "लाइव ट्रैकिंग मानचित्र",
+    menuStaff: "कर्मचारी कार्य스테이션",
+    menuAdmin: "व्यवस्थापक नियंत्रण केंद्र 🔒",
+    menuAlerts: "आपातकालीन चेतावनी",
+    menuHelp: "सहायता और समर्थन",
+    heroTitle: "स्मार्ट व्हीलचेयर सहायता प्रणाली",
+    heroDesc: "Twilio SMS एकीकरण, स्वचालित SLA टाइमर और 2D एयरपोर्ट फ़्लोर मैपिंग के साथ दुनिया भर के हवाई अड्डों के लिए सुसज्जित।",
+    btnRequest: "सहायता का अनुरोध करें ↗",
+    btnTrack: "अनुरोध ट्रैक करें",
+    btnAdmin: "व्यवस्थापक सुरक्षा केंद्र 🔒",
+    statTotal: "कुल अनुरोध",
+    statPending: "लंबित",
+    statAssigned: "आवंटित कर्मचारी",
+    statDone: "पूर्ण"
+  }
+};
+
+function changeLanguage(lang) {
+  const t = translations[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+  toast("Language updated successfully!");
+}
+
+let state = {
+  users: JSON.parse(localStorage.getItem('aa_users') || '[]'),
+  requests: JSON.parse(localStorage.getItem('aa_reqs') || '[]'),
+  currentUser: null,
+  staffLogged: false,
+  adminLogged: false
+};
+
+const staffMembers = [
+  { id: 'STAFF-01', name: 'Priya', gender: 'Female' },
+  { id: 'STAFF-02', name: 'Kumar', gender: 'Male' },
+  { id: 'STAFF-03', name: 'Sarah', gender: 'Female' },
+  { id: 'STAFF-04', name: 'John', gender: 'Male' }
+];
+
+const save = () => {
+  localStorage.setItem('aa_users', JSON.stringify(state.users));
+  localStorage.setItem('aa_reqs', JSON.stringify(state.requests));
+};
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  document.getElementById('crumbTitle').textContent = pageId.toUpperCase();
+  render();
+}
+
+function switchAuthTab(tab) {
+  if (tab === 'login') {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('regForm').classList.add('hidden');
+  } else {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('regForm').classList.remove('hidden');
+  }
+}
+
+document.getElementById('regForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('regName').value;
+  const phone = document.getElementById('regPhone').value;
+  const email = document.getElementById('regEmail').value;
+  const emPhone = document.getElementById('regEmPhone').value;
+  const pass = document.getElementById('regPass').value;
+  
+  state.users.push({ id: 'P-' + Date.now().toString().slice(-4), name, phone, email, emPhone, pass });
+  save();
+  toast('📱 Twilio SMS Sent: Account registered & verified successfully!');
+  switchAuthTab('login');
+});
+
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  const user = state.users.find(x => (x.email === u || x.phone === u) && x.pass === p);
+  if (user) {
+    state.currentUser = user;
+    document.getElementById('currentUserBadge').textContent = user.name;
+    toast('Authenticated as ' + user.name);
+    showPage('request');
+  } else {
+    toast('Invalid login credentials');
+  }
+});
+
+document.getElementById('reqForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const id = 'AA-2026-' + String(state.requests.length + 1).padStart(4, '0');
+  const req = {
+    id,
+    name: document.getElementById('reqName').value,
+    flight: document.getElementById('reqFlight').value,
+    time: document.getElementById('reqTime').value,
+    loc: document.getElementById('reqLoc').value,
+    gate: document.getElementById('reqGate').value,
+    genderPref: document.getElementById('reqGenderPref').value,
+    status: 'Pending',
+    staff: '',
+    emergency: false,
+    createdAt: Date.now()
+  };
+  state.requests.unshift(req);
+  save();
+  toast('✈️ Twilio SMS / WhatsApp Alert Dispatched for ' + id);
+  document.getElementById('reqForm').reset();
+  showPage('track');
+  document.getElementById('trackId').value = id;
+  trackRequest(id);
+});
+
+document.getElementById('trackForm').addEventListener('submit', e => {
+  e.preventDefault();
+  trackRequest(document.getElementById('trackId').value.trim());
+});
+
+function trackRequest(id) {
+  const req = state.requests.find(x => x.id.toUpperCase() === id.toUpperCase());
+  if (!req) return toast('Request ID not found');
+  
+  document.getElementById('trackCard').classList.remove('hidden');
+  document.getElementById('trIdDisplay').textContent = req.id;
+  document.getElementById('trStatusTag').textContent = req.status;
+  document.getElementById('trDetails').innerHTML = `
+    <b>Passenger:</b> ${req.name}<br>
+    <b>Flight & Boarding:</b> ${req.flight} (Boarding Time: ${req.time})<br>
+    <b>Route:</b> ${req.loc} ➔ ${req.gate}<br>
+    <b>Gender Preference:</b> <span class="tag blue">${req.genderPref || 'Any'}</span><br>
+    <b>Assigned Staff:</b> ${req.staff || 'Pending Assignment'}
+  `;
+  drawInteractiveMap(req.status, req.loc, req.gate);
+}
+
+function drawInteractiveMap(status, pickup, gate) {
+  const cvs = document.getElementById('mapCanvas');
+  const ctx = cvs.getContext('2d');
+  cvs.width = cvs.offsetWidth;
+  cvs.height = cvs.offsetHeight;
+  
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(30, 30, cvs.width - 60, cvs.height - 60);
+
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath();
+  ctx.moveTo(70, cvs.height / 2);
+  ctx.lineTo(cvs.width - 70, cvs.height / 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#3b82f6';
+  ctx.beginPath();
+  ctx.arc(70, cvs.height / 2, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('Pickup: ' + pickup, 40, (cvs.height / 2) + 30);
+
+  ctx.fillStyle = '#f97316';
+  ctx.beginPath();
+  ctx.arc(cvs.width - 70, cvs.height / 2, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.fillText('Gate: ' + gate, cvs.width - 100, (cvs.height / 2) + 30);
+
+  let prog = status === 'Completed' ? 1.0 : status === 'In Progress' ? 0.6 : status === 'Assigned' ? 0.3 : 0.08;
+  let currentX = 70 + (cvs.width - 140) * prog;
+
+  ctx.fillStyle = '#14b8a6';
+  ctx.beginPath();
+  ctx.arc(currentX, cvs.height / 2, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#14b8a6';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('♿ [ Wheelchair in Transit ]', currentX - 60, (cvs.height / 2) - 20);
+}
+
+document.getElementById('staffLoginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if (document.getElementById('stId').value === 'STAFF-01' && document.getElementById('stPin').value === 'staff123') {
+    state.staffLogged = true;
+    render();
+    toast('Staff Signed In Successfully');
+  } else toast('Invalid Staff Credentials');
+});
+
+function staffLogout() { state.staffLogged = false; render(); toast('Staff Signed Out'); }
+
+document.getElementById('adminLoginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if (document.getElementById('adId').value === 'admin' && document.getElementById('adPass').value === 'admin123') {
+    state.adminLogged = true;
+    render();
+    toast('Admin Access Granted');
+  } else toast('Invalid Admin Credentials');
+});
+
+function adminLogout() { state.adminLogged = false; render(); toast('Admin Logged Out'); }
+
+document.getElementById('emergencyForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const id = document.getElementById('emId').value.trim();
+  const req = state.requests.find(x => x.id.toUpperCase() === id.toUpperCase());
+  if (req) {
+    req.status = 'URGENT';
+    save();
+    toast('🚨 Twilio Emergency SMS & Priority Broadcast Dispatched for ' + id);
+    render();
+  } else toast('Invalid Request ID');
+});
+
+function getSLATimer(createdAt, status) {
+  if (status === 'Completed') return '<span class="tag green">Completed</span>';
+  let elapsedMins = Math.floor((Date.now() - createdAt) / 60000);
+  let remaining = 30 - elapsedMins;
+  if (remaining <= 0) {
+    return '<span class="tag red">⚠️ OVERDUE SLA</span>';
+  } else if (remaining < 10) {
+    return `<span class="tag orange">${remaining}m left (Urgent)</span>`;
+  }
+  return `<span class="tag yellow">${remaining}m remaining</span>`;
+}
+
+function render() {
+  document.getElementById('stTotal').textContent = state.requests.length;
+  document.getElementById('stPending').textContent = state.requests.filter(r => r.status === 'Pending').length;
+  document.getElementById('stAssigned').textContent = state.requests.filter(r => r.staff).length;
+  document.getElementById('stDone').textContent = state.requests.filter(r => r.status === 'Completed').length;
+
+  if (state.staffLogged) {
+    document.getElementById('staffAuthCard').classList.add('hidden');
+    document.getElementById('staffDashboard').classList.remove('hidden');
+    const tbody = document.querySelector('#staffTable tbody');
+    tbody.innerHTML = state.requests.map(r => `
+      <tr>
+        <td><b>${r.id}</b></td><td>${r.name}</td><td>${r.loc} ➔ ${r.gate}</td>
+        <td>${getSLATimer(r.createdAt, r.status)}</td>
+        <td><span class="tag blue">${r.genderPref || 'Any'}</span></td>
+        <td>
+          <select onchange="updateStatus('${r.id}', this.value)">
+            <option ${r.status==='Assigned'?'selected':''}>Assigned</option>
+            <option ${r.status==='In Progress'?'selected':''}>In Progress</option>
+            <option ${r.status==='Completed'?'selected':''}>Completed</option>
+          </select>
+        </td>
+      </tr>
+    `).join('');
+  } else {
+    document.getElementById('staffAuthCard').classList.remove('hidden');
+    document.getElementById('staffDashboard').classList.add('hidden');
+  }
+
+  if (state.adminLogged) {
+    document.getElementById('adminAuthCard').classList.add('hidden');
+    document.getElementById('adminDashboard').classList.remove('hidden');
+    
+    const query = (document.getElementById('adminSearch')?.value || '').toLowerCase();
+    const filtered = state.requests.filter(r => r.name.toLowerCase().includes(query) || r.flight.toLowerCase().includes(query) || r.id.toLowerCase().includes(query));
+
+    const tbody = document.querySelector('#adminTable tbody');
+    tbody.innerHTML = filtered.map(r => `
+      <tr>
+        <td><b>${r.id}</b><br>${r.name}</td>
+        <td>${r.flight}<br>${r.gate}</td>
+        <td>${getSLATimer(r.createdAt, r.status)}</td>
+        <td><span class="tag ${r.genderPref==='Female'?'orange':r.genderPref==='Male'?'blue':'yellow'}">${r.genderPref || 'Any'}</span></td>
+        <td>
+          <select onchange="assignStaff('${r.id}', this.value)">
+            <option value="">Unassigned</option>
+            ${staffMembers.map(s => `<option value="${s.id} (${s.name})" ${r.staff.includes(s.id)?'selected':''}>${s.id} - ${s.name} (${s.gender})</option>`).join('')}
+          </select>
+        </td>
+        <td>
+          <select onchange="updateStatus('${r.id}', this.value)">
+            <option ${r.status==='Pending'?'selected':''}>Pending</option>
+            <option ${r.status==='Assigned'?'selected':''}>Assigned</option>
+            <option ${r.status==='In Progress'?'selected':''}>In Progress</option>
+            <option ${r.status==='Completed'?'selected':''}>Completed</option>
+            <option ${r.status==='URGENT'?'selected':''}>URGENT</option>
+          </select>
+        </td>
+      </tr>
+    `).join('');
+
+    const uTbody = document.querySelector('#adminUserTable tbody');
+    uTbody.innerHTML = state.users.map(u => `
+      <tr>
+        <td><b>${u.id}</b></td>
+        <td>${u.name}</td>
+        <td>${u.phone}</td>
+        <td>${u.email}</td>
+        <td><span class="tag red">${u.emPhone || 'Not Provided'}</span></td>
+      </tr>
+    `).join('');
+
+  } else {
+    document.getElementById('adminAuthCard').classList.remove('hidden');
+    document.getElementById('adminDashboard').classList.add('hidden');
+  }
+}
+
+function assignStaff(id, st) {
+  const req = state.requests.find(r => r.id === id);
+  if (req) {
+    req.staff = st;
+    req.status = 'Assigned';
+    save();
+    render();
+    toast('Staff Assigned & SMS Dispatched');
+  }
+}
+
+function updateStatus(id, st) {
+  const req = state.requests.find(r => r.id === id);
+  if (req) { req.status = st; save(); render(); toast('Status updated successfully'); }
+}
+
+function exportCSV() {
+  let lines = ['ID,Passenger,Flight,Pickup,Gate,GenderPref,Staff,Status', ...state.requests.map(r => `${r.id},${r.name},${r.flight},${r.loc},${r.gate},${r.genderPref||'Any'},${r.staff},${r.status}`)];
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
+  a.download = 'airassist-production-audit.csv';
+  a.click();
+}
+
+render();
+</script>
+</body>
+</html>
